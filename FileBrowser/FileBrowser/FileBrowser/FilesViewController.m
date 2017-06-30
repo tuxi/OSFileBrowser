@@ -8,22 +8,22 @@
 
 #import "FilesViewController.h"
 
+#pragma mark *** FilesViewController ***
+
 @interface FilePreviewViewController : UIViewController {
-    UITextView *textView;
-    UIImageView *imageView;
+    UITextView *_textView;
+    UIImageView *_imageView;
 }
 
-
-
-+(BOOL)canHandleExtension:(NSString *)fileExt;
++ (BOOL)canHandleExtension:(NSString *)fileExt;
 - (instancetype)initWithFile:(NSString *)file;
+
 @end
 
 
 @implementation FilesViewController
 
-- (id)initWithPath:(NSString *)path
-{
+- (instancetype)initWithPath:(NSString *)path {
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
         
@@ -33,68 +33,39 @@
         
         NSError *error = nil;
         NSArray *tempFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&error];
+        NSLog(@"Error: %@", error);
         
-        if (error)
-        {
-            NSLog(@"ERROR: %@", error);
-            
-            if ([path isEqualToString:@"/System"])
-                tempFiles = @[@"Library"];
-            
-            if ([path isEqualToString:@"/Library"])
-                tempFiles = @[@"Preferences"];
-            
-            if ([path isEqualToString:@"/var"])
-                tempFiles = @[@"mobile"];
-            
-            if ([path isEqualToString:@"/usr"])
-                tempFiles = @[@"lib", @"libexec", @"bin"];
-        }
-        
-        self.files = [tempFiles sortedArrayWithOptions:0 usingComparator:^NSComparisonResult(NSString* file1, NSString* file2) {
-            NSString *newPath1 = [self.path stringByAppendingPathComponent:file1];
-            NSString *newPath2 = [self.path stringByAppendingPathComponent:file2];
-            
-            BOOL isDirectory1, isDirectory2;
-            [[NSFileManager defaultManager ] fileExistsAtPath:newPath1 isDirectory:&isDirectory1];
-            [[NSFileManager defaultManager ] fileExistsAtPath:newPath2 isDirectory:&isDirectory2];
-            
-            if (isDirectory1 && !isDirectory2)
-                return NSOrderedDescending;
-            
-            return  NSOrderedAscending;
-        }];
+        self.files = [self sortedFiles:tempFiles];
     }
     return self;
 }
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
+////////////////////////////////////////////////////////////////////////
+#pragma mark - UITableViewDataSource
+////////////////////////////////////////////////////////////////////////
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Return the number of rows in the section.
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    
     return self.files.count;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"FileCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -110,12 +81,12 @@
     }
     cell.textLabel.text = self.files[indexPath.row];
     
-    if (isDirectory)
-        cell.imageView.image = [UIImage imageNamed:@"Folder"];
-    else if ([[newPath pathExtension] isEqualToString:@"png"])
-        cell.imageView.image = [UIImage imageNamed:@"Picture"];
-    else
-        cell.imageView.image = nil;
+    //    if (isDirectory)
+    //        cell.imageView.image = [UIImage imageNamed:@"Folder"];
+    //    else if ([[newPath pathExtension] isEqualToString:@"png"])
+    //        cell.imageView.image = [UIImage imageNamed:@"Picture"];
+    //    else
+    //        cell.imageView.image = nil;
     
 #if 0
     if (fileExists && !isDirectory)
@@ -126,8 +97,7 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
     NSString *newPath = [self.path stringByAppendingPathComponent:self.files[indexPath.row]];
     
     NSString *tmpPath = [NSTemporaryDirectory() stringByAppendingPathComponent:newPath.lastPathComponent];
@@ -136,16 +106,18 @@
     
     [[NSFileManager defaultManager] copyItemAtPath:newPath toPath:tmpPath error:&error];
     
-    if (error)
+    if (error) {
         NSLog(@"ERROR: %@", error);
+    }
     
     UIActivityViewController *shareActivity = [[UIActivityViewController alloc] initWithActivityItems:@[[NSURL fileURLWithPath:tmpPath]] applicationActivities:nil];
-    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     shareActivity.completionHandler = ^(NSString *activityType, BOOL completed){
         [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
         
     };
-    
+#pragma clang diagnostic pop
     UIViewController *vc = [[UIViewController alloc] init];
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
     nc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
@@ -155,35 +127,26 @@
     }];
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSString *newPath = [self.path stringByAppendingPathComponent:self.files[indexPath.row]];
-    
-    
     BOOL isDirectory;
     BOOL fileExists = [[NSFileManager defaultManager ] fileExistsAtPath:newPath isDirectory:&isDirectory];
     
-    
-    if (fileExists)
-    {
-        if (isDirectory)
-        {
+    if (fileExists) {
+        if (isDirectory) {
             FilesViewController *vc = [[FilesViewController alloc] initWithPath:newPath];
             [self.navigationController showViewController:vc sender:self];
-        }
-        else if ([FilePreviewViewController canHandleExtension:[newPath pathExtension]])
-        {
+        } else if ([FilePreviewViewController canHandleExtension:[newPath pathExtension]]) {
             FilePreviewViewController *preview = [[FilePreviewViewController alloc] initWithFile:newPath];
-            
+            preview.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"back" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonClick)];
             UINavigationController *detailNavController = [[UINavigationController alloc] initWithRootViewController:preview];
             
             [self.navigationController showDetailViewController:detailNavController sender:self];
-        }
-        else
-        {
+        } else {
             QLPreviewController *preview = [[QLPreviewController alloc] init];
             preview.dataSource = self;
-            
             UINavigationController *detailNavController = [[UINavigationController alloc] initWithRootViewController:preview];
             
             [self.navigationController showDetailViewController:detailNavController sender:self];
@@ -191,42 +154,76 @@
     }
 }
 
-#pragma mark - QuickLook
+- (void)backButtonClick {
+    if (self.presentedViewController) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
+#pragma mark - QLPreviewControllerDataSource
+////////////////////////////////////////////////////////////////////////
 
 - (BOOL)previewController:(QLPreviewController *)controller shouldOpenURL:(NSURL *)url forPreviewItem:(id <QLPreviewItem>)item {
     
     return YES;
 }
 
-- (NSInteger) numberOfPreviewItemsInPreviewController: (QLPreviewController *) controller {
+- (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller {
     return 1;
 }
 
-- (id <QLPreviewItem>) previewController: (QLPreviewController *) controller previewItemAtIndex: (NSInteger) index {
+- (id <QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger) index {
     
     NSString *newPath = [self.path stringByAppendingPathComponent:self.files[self.tableView.indexPathForSelectedRow.row]];
     
     return [NSURL fileURLWithPath:newPath];
 }
 
+////////////////////////////////////////////////////////////////////////
+#pragma mark - Sorted files
+////////////////////////////////////////////////////////////////////////
+- (NSArray *)sortedFiles:(NSArray *)files {
+    return [files sortedArrayWithOptions:0 usingComparator:^NSComparisonResult(NSString* file1, NSString* file2) {
+        NSString *newPath1 = [self.path stringByAppendingPathComponent:file1];
+        NSString *newPath2 = [self.path stringByAppendingPathComponent:file2];
+        
+        BOOL isDirectory1, isDirectory2;
+        [[NSFileManager defaultManager ] fileExistsAtPath:newPath1 isDirectory:&isDirectory1];
+        [[NSFileManager defaultManager ] fileExistsAtPath:newPath2 isDirectory:&isDirectory2];
+        
+        if (isDirectory1 && !isDirectory2)
+            return NSOrderedDescending;
+        
+        return  NSOrderedAscending;
+    }];
+}
+
+
 @end
 
+#pragma mark *** FilePreviewViewController ***
 
 @implementation FilePreviewViewController
 
-- (instancetype)initWithFile:(NSString *)file
-{
+////////////////////////////////////////////////////////////////////////
+#pragma mark - initialize
+////////////////////////////////////////////////////////////////////////
+
+- (instancetype)initWithFile:(NSString *)file {
     self = [super init];
     if (self) {
         
-        textView = [[UITextView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-        textView.editable = NO;
-        textView.backgroundColor = [UIColor whiteColor];
+        _textView = [[UITextView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        _textView.editable = NO;
+        _textView.backgroundColor = [UIColor whiteColor];
         
-        imageView = [[UIImageView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        _imageView = [[UIImageView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        _imageView.contentMode = UIViewContentModeScaleAspectFit;
         
-        imageView.backgroundColor = [UIColor whiteColor];
+        _imageView.backgroundColor = [UIColor whiteColor];
         
         [self loadFile:file];
         
@@ -234,32 +231,26 @@
     return self;
 }
 
-+(BOOL)canHandleExtension:(NSString *)fileExt
-{
-    if (UI_USER_INTERFACE_IDIOM() != 4) // Don't use QuickLook for images on watchOS
-        return ([fileExt isEqualToString:@"plist"] || [fileExt isEqualToString:@"strings"] || [fileExt isEqualToString:@"xcconfig"] );
-    
-    return ([fileExt isEqualToString:@"plist"] || [fileExt isEqualToString:@"strings"] || [fileExt isEqualToString:@"png"] || [fileExt isEqualToString:@"xcconfig"] );
+////////////////////////////////////////////////////////////////////////
+#pragma mark - Other
+////////////////////////////////////////////////////////////////////////
+
++ (BOOL)canHandleExtension:(NSString *)fileExtension {
+    return ([fileExtension isEqualToString:@"plist"] || [fileExtension isEqualToString:@"strings"] || [fileExtension isEqualToString:@"xcconfig"]);
 }
 
--(void)loadFile:(NSString *)file
-{
-    if ([file.pathExtension isEqualToString:@"plist"] || [file.pathExtension isEqualToString:@"strings"])
-    {
+- (void)loadFile:(NSString *)file {
+    if ([file.pathExtension isEqualToString:@"plist"] || [file.pathExtension isEqualToString:@"strings"]) {
         NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:file];
-        [textView setText:[d description]];
-        self.view = textView;
-    }
-    else if ([file.pathExtension isEqualToString:@"xcconfig"])
-    {
+        [_textView setText:[d description]];
+        self.view = _textView;
+    } else if ([file.pathExtension isEqualToString:@"xcconfig"]) {
         NSString *d = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
-        [textView setText:d];
-        self.view = textView;
-    }
-    else
-    {
-        imageView.image = [UIImage imageWithContentsOfFile:file];
-        self.view = imageView;
+        [_textView setText:d];
+        self.view = _textView;
+    } else {
+        _imageView.image = [UIImage imageWithContentsOfFile:file];
+        self.view = _imageView;
     }
     
     self.title = file.lastPathComponent;

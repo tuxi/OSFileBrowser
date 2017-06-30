@@ -11,10 +11,10 @@
 
 @interface FilesViewController : UITableViewController <QLPreviewControllerDataSource>
 
-- (id)initWithPath:(NSString *)path;
+- (instancetype)initWithPath:(NSString *)path;
 
 @property (strong) NSString *path;
-@property (strong) NSArray *files;
+@property (strong) NSArray<NSString *> *files;
 
 @end
 
