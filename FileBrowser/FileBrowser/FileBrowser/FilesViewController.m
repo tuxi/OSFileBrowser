@@ -8,6 +8,8 @@
 
 #import "FilesViewController.h"
 
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 #pragma mark *** FilesViewController ***
 
 @interface FilePreviewViewController : UIViewController {
@@ -81,12 +83,13 @@
     }
     cell.textLabel.text = self.files[indexPath.row];
     
-    //    if (isDirectory)
-    //        cell.imageView.image = [UIImage imageNamed:@"Folder"];
-    //    else if ([[newPath pathExtension] isEqualToString:@"png"])
-    //        cell.imageView.image = [UIImage imageNamed:@"Picture"];
-    //    else
-    //        cell.imageView.image = nil;
+    if (isDirectory) {
+        cell.imageView.image = [UIImage imageNamed:@"Folder"];
+    } else if ([[newPath pathExtension] isEqualToString:@"png"]) {
+        cell.imageView.image = [UIImage imageNamed:@"Picture"];
+    } else {
+        cell.imageView.image = nil;
+    }
     
 #if 0
     if (fileExists && !isDirectory)
@@ -111,25 +114,21 @@
     }
     
     UIActivityViewController *shareActivity = [[UIActivityViewController alloc] initWithActivityItems:@[[NSURL fileURLWithPath:tmpPath]] applicationActivities:nil];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
     shareActivity.completionHandler = ^(NSString *activityType, BOOL completed){
         [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
         
     };
-#pragma clang diagnostic pop
+
     UIViewController *vc = [[UIViewController alloc] init];
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
     nc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     
-    [self.navigationController presentViewController:nc animated:YES completion:^{
-        
-    }];
+    [self.navigationController presentViewController:nc animated:YES completion:nil];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSString *newPath = [self.path stringByAppendingPathComponent:self.files[indexPath.row]];
     BOOL isDirectory;
     BOOL fileExists = [[NSFileManager defaultManager ] fileExistsAtPath:newPath isDirectory:&isDirectory];
@@ -176,7 +175,9 @@
 }
 
 - (id <QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger) index {
-    
+    NSLog(@"index: %ld", self.tableView.indexPathForSelectedRow.row);
+    // self.tableView.indexPathForSelectedRow 获取当前选中的IndexPath,
+    // 注意: 当设置了[tableView deselectRowAtIndexPath:indexPath animated:YES]后，indexPathForSelectedRow为初始值
     NSString *newPath = [self.path stringByAppendingPathComponent:self.files[self.tableView.indexPathForSelectedRow.row]];
     
     return [NSURL fileURLWithPath:newPath];
@@ -186,7 +187,7 @@
 #pragma mark - Sorted files
 ////////////////////////////////////////////////////////////////////////
 - (NSArray *)sortedFiles:(NSArray *)files {
-    return [files sortedArrayWithOptions:0 usingComparator:^NSComparisonResult(NSString* file1, NSString* file2) {
+    return [files sortedArrayWithOptions:NSSortConcurrent usingComparator:^NSComparisonResult(NSString* file1, NSString* file2) {
         NSString *newPath1 = [self.path stringByAppendingPathComponent:file1];
         NSString *newPath2 = [self.path stringByAppendingPathComponent:file2];
         
@@ -194,8 +195,9 @@
         [[NSFileManager defaultManager ] fileExistsAtPath:newPath1 isDirectory:&isDirectory1];
         [[NSFileManager defaultManager ] fileExistsAtPath:newPath2 isDirectory:&isDirectory2];
         
-        if (isDirectory1 && !isDirectory2)
+        if (isDirectory1 && !isDirectory2) {
             return NSOrderedDescending;
+        }
         
         return  NSOrderedAscending;
     }];
