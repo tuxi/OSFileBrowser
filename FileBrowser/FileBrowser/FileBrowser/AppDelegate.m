@@ -23,9 +23,9 @@
         
     [self.window makeKeyAndVisible];
     NSString *startingPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-    FilesViewController *startingVC = [[FilesViewController alloc] initWithPath:startingPath];
+    FilesViewController *filesVC = [[FilesViewController alloc] initWithPath:startingPath];
     
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:startingVC];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:filesVC];
     UINavigationController *detailNavController = [[UINavigationController alloc] init];
     UISplitViewController *splitController = [[UISplitViewController alloc] init];
     splitController.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;

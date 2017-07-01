@@ -13,8 +13,9 @@
 
 - (instancetype)initWithPath:(NSString *)path;
 
-@property (strong) NSString *path;
-@property (strong) NSArray<NSString *> *files;
+@property (nonatomic, copy) NSString *path;
+@property (nonatomic, strong) NSArray<NSString *> *files;
+@property (nonatomic, assign) BOOL displayHiddenFiles;
 
 @end
 

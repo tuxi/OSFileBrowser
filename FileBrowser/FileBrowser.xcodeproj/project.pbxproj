@@ -13,6 +13,7 @@
 		18026ABF1F05602F001C6379 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18026ABD1F05602F001C6379 /* LaunchScreen.storyboard */; };
 		18026AC91F05606D001C6379 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18026AC81F05606D001C6379 /* AppDelegate.m */; };
 		18026ACC1F0560B2001C6379 /* FilesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18026ACB1F0560B2001C6379 /* FilesViewController.m */; };
+		187BA6331F07427E00E7EA5D /* FileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 187BA6321F07427E00E7EA5D /* FileTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		18026AC81F05606D001C6379 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		18026ACA1F0560B2001C6379 /* FilesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilesViewController.h; sourceTree = "<group>"; };
 		18026ACB1F0560B2001C6379 /* FilesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilesViewController.m; sourceTree = "<group>"; };
+		187BA6311F07427E00E7EA5D /* FileTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileTableViewCell.h; sourceTree = "<group>"; };
+		187BA6321F07427E00E7EA5D /* FileTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +86,8 @@
 				18026AC81F05606D001C6379 /* AppDelegate.m */,
 				18026ACA1F0560B2001C6379 /* FilesViewController.h */,
 				18026ACB1F0560B2001C6379 /* FilesViewController.m */,
+				187BA6311F07427E00E7EA5D /* FileTableViewCell.h */,
+				187BA6321F07427E00E7EA5D /* FileTableViewCell.m */,
 			);
 			path = FileBrowser;
 			sourceTree = "<group>";
@@ -160,6 +165,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				18026AC91F05606D001C6379 /* AppDelegate.m in Sources */,
+				187BA6331F07427E00E7EA5D /* FileTableViewCell.m in Sources */,
 				18026AB11F05602F001C6379 /* main.m in Sources */,
 				18026ACC1F0560B2001C6379 /* FilesViewController.m in Sources */,
 			);

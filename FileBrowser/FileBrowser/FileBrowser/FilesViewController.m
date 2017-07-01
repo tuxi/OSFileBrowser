@@ -7,6 +7,7 @@
 //
 
 #import "FilesViewController.h"
+#import "FileTableViewCell.h"
 
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
@@ -25,32 +26,58 @@
 
 @implementation FilesViewController
 
+////////////////////////////////////////////////////////////////////////
+#pragma mark - Initialize
+////////////////////////////////////////////////////////////////////////
+
 - (instancetype)initWithPath:(NSString *)path {
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
         
         self.path = path;
-        
-        self.title = [path lastPathComponent];
-        
-        NSError *error = nil;
-        NSArray *tempFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&error];
-        NSLog(@"Error: %@", error);
-        
-        self.files = [self sortedFiles:tempFiles];
+        _displayHiddenFiles = NO;
+        [self loadFile:path];
+        [self removeHiddenFilesFromFiles:self.files];
     }
     return self;
 }
 
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
+- (void)loadFile:(NSString *)path {
+    NSError *error = nil;
+    NSArray *tempFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&error];
+    NSLog(@"Error: %@", error);
+    self.files = [self sortedFiles:tempFiles];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)setDisplayHiddenFiles:(BOOL)displayHiddenFiles {
+    if (_displayHiddenFiles == displayHiddenFiles) {
+        return;
+    }
+    _displayHiddenFiles = displayHiddenFiles;
+    [self loadFile:self.path];
+    if (!_displayHiddenFiles) {
+        [self removeHiddenFilesFromFiles:self.files];
+    }
+}
+
+- (NSArray *)removeHiddenFilesFromFiles:(NSArray *)files {
+    NSIndexSet *indexSet = [files indexesOfObjectsPassingTest:^BOOL(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        return [obj hasPrefix:@"."];
+    }];
+    NSMutableArray *tempFiles = [self.files mutableCopy];
+    [tempFiles removeObjectsAtIndexes:indexSet];
+    return tempFiles;
+    
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = [self.path lastPathComponent];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"reload" style:UIBarButtonItemStyleDone target:self action:@selector(reloadFiles)];
+}
+- (void)reloadFiles {
+    [self loadFile:self.path];
+    [self.tableView reloadData];
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -68,63 +95,44 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"FileCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
-    if (!cell)
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-    
-    NSString *newPath = [self.path stringByAppendingPathComponent:self.files[indexPath.row]];
-    
-    BOOL isDirectory;
-    BOOL fileExists = [[NSFileManager defaultManager ] fileExistsAtPath:newPath isDirectory:&isDirectory];
-    if (!fileExists) {
-        return cell;
-    }
-    cell.textLabel.text = self.files[indexPath.row];
-    
-    if (isDirectory) {
-        cell.imageView.image = [UIImage imageNamed:@"Folder"];
-    } else if ([[newPath pathExtension] isEqualToString:@"png"]) {
-        cell.imageView.image = [UIImage imageNamed:@"Picture"];
-    } else {
-        cell.imageView.image = nil;
+    FileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([FileTableViewCell class])];
+    if (cell == nil) {
+        cell = [[FileTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:NSStringFromClass([FileTableViewCell class])];
     }
     
-#if 0
-    if (fileExists && !isDirectory)
-        cell.accessoryType = UITableViewCellAccessoryDetailButton;
-    else
-        cell.accessoryType = UITableViewCellAccessoryNone;
-#endif
+    cell.path = [self.path stringByAppendingPathComponent:self.files[indexPath.row]];
+    
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
+    
     NSString *newPath = [self.path stringByAppendingPathComponent:self.files[indexPath.row]];
-    
-    NSString *tmpPath = [NSTemporaryDirectory() stringByAppendingPathComponent:newPath.lastPathComponent];
-    
-    NSError *error = nil;
-    
-    [[NSFileManager defaultManager] copyItemAtPath:newPath toPath:tmpPath error:&error];
-    
-    if (error) {
-        NSLog(@"ERROR: %@", error);
-    }
-    
-    UIActivityViewController *shareActivity = [[UIActivityViewController alloc] initWithActivityItems:@[[NSURL fileURLWithPath:tmpPath]] applicationActivities:nil];
-
-    shareActivity.completionHandler = ^(NSString *activityType, BOOL completed){
-        [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
+    UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"more operation" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"share" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+         NSString *tmpPath = [NSTemporaryDirectory() stringByAppendingPathComponent:newPath.lastPathComponent];
+        NSError *error = nil;
+        [[NSFileManager defaultManager] copyItemAtPath:newPath toPath:tmpPath error:&error];
         
-    };
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+        }
+        UIActivityViewController *shareActivity = [[UIActivityViewController alloc] initWithActivityItems:@[[NSURL fileURLWithPath:tmpPath]] applicationActivities:nil];
+        
+        shareActivity.completionWithItemsHandler = ^(UIActivityType  _Nullable activityType, BOOL completed, NSArray * _Nullable returnedItems, NSError * _Nullable activityError) {
+            [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
+        };
+        [self.navigationController presentViewController:shareActivity animated:YES completion:nil];
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"info" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+        
+        
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
 
-    UIViewController *vc = [[UIViewController alloc] init];
-    UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
-    nc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     
-    [self.navigationController presentViewController:nc animated:YES completion:nil];
+    
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -159,6 +167,28 @@
     } else {
         [self.navigationController popViewControllerAnimated:YES];
     }
+}
+
+////////////////////////////////////////////////////////////////////////
+#pragma mark - UITableViewDelegate
+////////////////////////////////////////////////////////////////////////
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSString *currentPath = [self.path stringByAppendingPathComponent:self.files[indexPath.row]];
+    NSError *error = nil;
+    [[NSFileManager defaultManager] removeItemAtPath:currentPath error:&error];
+    if (error) {
+        [[[UIAlertView alloc] initWithTitle:@"Remove error" message:nil delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil, nil] show];
+    }
+    [self reloadFiles];
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return @"delete";
 }
 
 ////////////////////////////////////////////////////////////////////////
