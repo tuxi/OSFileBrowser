@@ -22,7 +22,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         
     [self.window makeKeyAndVisible];
-    NSString *startingPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    NSString *startingPath = NSHomeDirectory();
     FilesViewController *filesVC = [[FilesViewController alloc] initWithPath:startingPath];
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:filesVC];

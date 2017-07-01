@@ -8,6 +8,7 @@
 
 #import "FilesViewController.h"
 #import "FileTableViewCell.h"
+#import "NSObject+IvarList.h"
 
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
@@ -37,7 +38,7 @@
         self.path = path;
         _displayHiddenFiles = NO;
         [self loadFile:path];
-        [self removeHiddenFilesFromFiles:self.files];
+        
     }
     return self;
 }
@@ -45,8 +46,13 @@
 - (void)loadFile:(NSString *)path {
     NSError *error = nil;
     NSArray *tempFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&error];
-    NSLog(@"Error: %@", error);
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
     self.files = [self sortedFiles:tempFiles];
+    if (!_displayHiddenFiles) {
+       self.files = [self removeHiddenFilesFromFiles:self.files];
+    }
 }
 
 - (void)setDisplayHiddenFiles:(BOOL)displayHiddenFiles {
@@ -55,9 +61,7 @@
     }
     _displayHiddenFiles = displayHiddenFiles;
     [self loadFile:self.path];
-    if (!_displayHiddenFiles) {
-        [self removeHiddenFilesFromFiles:self.files];
-    }
+    
 }
 
 - (NSArray *)removeHiddenFilesFromFiles:(NSArray *)files {
@@ -73,7 +77,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = [self.path lastPathComponent];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"reload" style:UIBarButtonItemStyleDone target:self action:@selector(reloadFiles)];
+    UIBarButtonItem *rightBarButton1 = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStyleDone target:self action:@selector(reloadFiles)];
+    self.navigationItem.rightBarButtonItems = @[rightBarButton1];
 }
 - (void)reloadFiles {
     [self loadFile:self.path];
@@ -125,8 +130,16 @@
         [self.navigationController presentViewController:shareActivity animated:YES completion:nil];
     }]];
     [alert addAction:[UIAlertAction actionWithTitle:@"info" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        NSDictionary *fileAtt = [[NSFileManager defaultManager] attributesOfItemAtPath:newPath error:nil];
+    
+        NSMutableString *attstring = @"".mutableCopy;
+        [fileAtt enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            if ([key isEqualToString:NSFileSize]) {
+            }
+            [attstring appendString:[NSString stringWithFormat:@"%@:%@\n", key, obj]];
+        }];
         
-        
+        [[[UIAlertView alloc] initWithTitle:@"File info" message:attstring delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil, nil] show];
         
     }]];
     [self presentViewController:alert animated:YES completion:nil];
