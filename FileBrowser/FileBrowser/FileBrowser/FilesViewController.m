@@ -281,15 +281,15 @@
 ////////////////////////////////////////////////////////////////////////
 
 + (BOOL)canHandleExtension:(NSString *)fileExtension {
-    return ([fileExtension isEqualToString:@"plist"] || [fileExtension isEqualToString:@"strings"] || [fileExtension isEqualToString:@"xcconfig"]);
+    return ([fileExtension.lowercaseString isEqualToString:@"plist"] || [fileExtension.lowercaseString isEqualToString:@"strings"] || [fileExtension.lowercaseString isEqualToString:@"xcconfig"]);
 }
 
 - (void)loadFile:(NSString *)file {
-    if ([file.pathExtension isEqualToString:@"plist"] || [file.pathExtension isEqualToString:@"strings"]) {
+    if ([file.pathExtension.lowercaseString isEqualToString:@"plist"] || [file.pathExtension.lowercaseString isEqualToString:@"strings"]) {
         NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:file];
         [_textView setText:[d description]];
         self.view = _textView;
-    } else if ([file.pathExtension isEqualToString:@"xcconfig"]) {
+    } else if ([file.pathExtension.lowercaseString isEqualToString:@"xcconfig"]) {
         NSString *d = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
         [_textView setText:d];
         self.view = _textView;

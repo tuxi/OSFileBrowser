@@ -32,8 +32,10 @@
     self.detailTextLabel.text = [NSString stringWithFormat:@"%@", [NSString transformedFileSizeValue:@([path fileSize])]];
     if (isDirectory) {
         self.imageView.image = [UIImage imageNamed:@"Folder"];
-    } else if ([[path pathExtension] isEqualToString:@"png"]) {
+    } else if ([path.pathExtension.lowercaseString isEqualToString:@"png"]
+               || [path.pathExtension.lowercaseString isEqualToString:@"jpg"]) {
         self.imageView.image = [UIImage imageNamed:@"Picture"];
+//        self.imageView.image = [UIImage imageWithContentsOfFile:path];
     } else {
         self.imageView.image = nil;
     }
