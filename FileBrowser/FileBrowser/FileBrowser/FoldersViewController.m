@@ -9,6 +9,7 @@
 #import "FoldersViewController.h"
 #import "FileTableViewCell.h"
 #import "NSObject+IvarList.h"
+#import "MonitorFileChangeHelper.h"
 
 static void * FileProgressObserverContext = &FileProgressObserverContext;
 
@@ -41,9 +42,10 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 @property (nonatomic, strong) UILabel *pathLabel;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) UIButton *selectorButton;
-@property (nonatomic, strong) UIButton *reloadBtn;
+@property (nonatomic, strong) UIButton *deleteButton;
 @property (nonatomic, copy) NSString *selectorFilenNewName;
 @property (nonatomic, strong) NSProgress *fileProgress;
+@property (nonatomic, strong) MonitorFileChangeHelper *fileHelper;
 
 @end
 
@@ -62,13 +64,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         _displayHiddenFiles = NO;
         [self loadFile:path];
         self.title = [self.path lastPathComponent];
-        UIButton *reloadBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.reloadBtn = reloadBtn;
-        [reloadBtn setTitle:@"reload" forState:UIControlStateNormal];
-        [reloadBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [reloadBtn sizeToFit];
-        [reloadBtn addTarget:self action:@selector(reloadFiles) forControlEvents:UIControlEventTouchUpInside];
-        UIBarButtonItem *rightBarButton1 = [[UIBarButtonItem alloc] initWithCustomView:reloadBtn];
         
         UIButton *selectorBtn = [UIButton buttonWithType:(UIButtonTypeCustom)];
         self.selectorButton = selectorBtn;
@@ -77,9 +72,15 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         [selectorBtn sizeToFit];
         [selectorBtn addTarget:self action:@selector(chooseSandBoxDocumentFiles) forControlEvents:UIControlEventTouchUpInside];
         UIBarButtonItem *rightBarButton2 = [[UIBarButtonItem alloc]initWithCustomView:selectorBtn];
-        self.navigationItem.rightBarButtonItems = @[rightBarButton1, rightBarButton2];
+        self.navigationItem.rightBarButtonItems = @[rightBarButton2];
         _fileProgress = [NSProgress progressWithTotalUnitCount:0];
         [_fileProgress addObserver:self forKeyPath:NSStringFromSelector(@selector(fractionCompleted)) options:NSKeyValueObservingOptionInitial context:FileProgressObserverContext];
+        
+        _fileHelper = [MonitorFileChangeHelper new];
+        __weak typeof(self) weakSelf = self;
+        [_fileHelper watcherForPath:self.path block:^(NSInteger type) {
+            [weakSelf reloadFiles];
+        }];
     }
     return self;
 }
@@ -130,13 +131,29 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         if (self.selectorFiles.count > 0) {
             [self.selectorFiles removeAllObjects];
         }
+        UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.deleteButton = deleteButton;
+        [deleteButton setTitle:@"reload" forState:UIControlStateNormal];
+        [deleteButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [deleteButton sizeToFit];
+        [deleteButton addTarget:self action:@selector(deleteFileFromSelectorFiles) forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem *rightBarButton1 = [[UIBarButtonItem alloc] initWithCustomView:deleteButton];
         [self.selectorButton setTitle:@"ok" forState:UIControlStateNormal];
-        [self.reloadBtn setTitle:@"delete" forState:UIControlStateNormal];
+        [self.deleteButton setTitle:@"delete" forState:UIControlStateNormal];
+        UIBarButtonItem *rightBarButton2 = [[UIBarButtonItem alloc]initWithCustomView:self.selectorButton];
+        self.navigationItem.rightBarButtonItems = @[rightBarButton1, rightBarButton2];
         // 编辑模式的时候可以多选
         self.tableView.allowsMultipleSelectionDuringEditing = YES;
         
     } else {
-        [self.selectorButton setTitle:@"add" forState:UIControlStateNormal];
+        UIButton *selectorBtn = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        self.selectorButton = selectorBtn;
+        [selectorBtn setTitle:@"add" forState:UIControlStateNormal];
+        [selectorBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [selectorBtn sizeToFit];
+        [selectorBtn addTarget:self action:@selector(chooseSandBoxDocumentFiles) forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem *rightBarButton2 = [[UIBarButtonItem alloc]initWithCustomView:selectorBtn];
+        self.navigationItem.rightBarButtonItems = @[rightBarButton2];
     }
     [self.tableView setEditing:selectorMode animated:YES];
     
@@ -175,27 +192,27 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 
 
 - (void)reloadFiles {
-    if ([self.reloadBtn.currentTitle isEqualToString:@"reload"]) {
-        [self loadFile:self.path];
-        [self.tableView reloadData];
-    } else if ([self.reloadBtn.currentTitle isEqualToString:@"delete"]) {
-        [self.selectorFiles enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *fullPath = [self.path stringByAppendingPathComponent:obj];
-            NSError *removeError = nil;
-            [[NSFileManager defaultManager] removeItemAtPath:fullPath error:&removeError];
-            if (removeError) {
-                NSLog(@"Error: remove error[%@]", removeError.localizedDescription);
-            }
-        }];
-    }
+    [self loadFile:self.path];
+    [self.tableView reloadData];
     
+}
+
+- (void)deleteFileFromSelectorFiles {
+    [self.selectorFiles enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *fullPath = [self.path stringByAppendingPathComponent:obj];
+        NSError *removeError = nil;
+        [[NSFileManager defaultManager] removeItemAtPath:fullPath error:&removeError];
+        if (removeError) {
+            NSLog(@"Error: remove error[%@]", removeError.localizedDescription);
+        }
+    }];
 }
 
 - (void)chooseSandBoxDocumentFiles {
     __weak typeof(self) weakSelf = self;
     if ([self.selectorButton.currentTitle isEqualToString:@"add"]) {
         // 跳转到沙盒document目录下的文件，并将选择的文件copy到当前目录下
-        FoldersViewController *vc = [[FoldersViewController alloc] initWithPath:NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject];
+        FoldersViewController *vc = [[FoldersViewController alloc] initWithPath:NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject];
         vc.selectorMode = YES;
         [self.navigationController showViewController:vc sender:self];
         
@@ -251,6 +268,10 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     [paths enumerateObjectsUsingBlock:^(NSString *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         NSString *desPath = [weakSelf.path stringByAppendingPathComponent:[obj lastPathComponent]];
+        if ([desPath isEqualToString:obj]) {
+            NSLog(@"路径相同");
+            return;
+        }
         if ([[NSFileManager defaultManager] fileExistsAtPath:desPath]) {
             UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"源文件夹存在相同文件，是否替换" message:nil preferredStyle:UIAlertControllerStyleAlert];
             [alert addAction:[UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

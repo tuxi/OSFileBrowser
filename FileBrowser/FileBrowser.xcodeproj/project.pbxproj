@@ -13,6 +13,7 @@
 		18026ABF1F05602F001C6379 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18026ABD1F05602F001C6379 /* LaunchScreen.storyboard */; };
 		18026AC91F05606D001C6379 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18026AC81F05606D001C6379 /* AppDelegate.m */; };
 		18026ACC1F0560B2001C6379 /* FoldersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18026ACB1F0560B2001C6379 /* FoldersViewController.m */; };
+		186984211F1F8C0C00423B0D /* MonitorFileChangeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 186984201F1F8C0C00423B0D /* MonitorFileChangeHelper.m */; };
 		187BA6331F07427E00E7EA5D /* FileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 187BA6321F07427E00E7EA5D /* FileTableViewCell.m */; };
 		187BA6361F0761B500E7EA5D /* NSObject+IvarList.m in Sources */ = {isa = PBXBuildFile; fileRef = 187BA6351F0761B500E7EA5D /* NSObject+IvarList.m */; };
 /* End PBXBuildFile section */
@@ -28,6 +29,8 @@
 		18026AC81F05606D001C6379 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		18026ACA1F0560B2001C6379 /* FoldersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoldersViewController.h; sourceTree = "<group>"; };
 		18026ACB1F0560B2001C6379 /* FoldersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoldersViewController.m; sourceTree = "<group>"; };
+		1869841F1F1F8C0C00423B0D /* MonitorFileChangeHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonitorFileChangeHelper.h; sourceTree = "<group>"; };
+		186984201F1F8C0C00423B0D /* MonitorFileChangeHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MonitorFileChangeHelper.m; sourceTree = "<group>"; };
 		187BA6311F07427E00E7EA5D /* FileTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileTableViewCell.h; sourceTree = "<group>"; };
 		187BA6321F07427E00E7EA5D /* FileTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileTableViewCell.m; sourceTree = "<group>"; };
 		187BA6341F0761B500E7EA5D /* NSObject+IvarList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+IvarList.h"; sourceTree = "<group>"; };
@@ -93,6 +96,8 @@
 				187BA6321F07427E00E7EA5D /* FileTableViewCell.m */,
 				187BA6341F0761B500E7EA5D /* NSObject+IvarList.h */,
 				187BA6351F0761B500E7EA5D /* NSObject+IvarList.m */,
+				1869841F1F1F8C0C00423B0D /* MonitorFileChangeHelper.h */,
+				186984201F1F8C0C00423B0D /* MonitorFileChangeHelper.m */,
 			);
 			path = FileBrowser;
 			sourceTree = "<group>";
@@ -171,6 +176,7 @@
 			files = (
 				18026AC91F05606D001C6379 /* AppDelegate.m in Sources */,
 				187BA6331F07427E00E7EA5D /* FileTableViewCell.m in Sources */,
+				186984211F1F8C0C00423B0D /* MonitorFileChangeHelper.m in Sources */,
 				18026AB11F05602F001C6379 /* main.m in Sources */,
 				187BA6361F0761B500E7EA5D /* NSObject+IvarList.m in Sources */,
 				18026ACC1F0560B2001C6379 /* FoldersViewController.m in Sources */,
