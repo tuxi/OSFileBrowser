@@ -93,6 +93,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     return self;
 }
 
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -636,10 +637,10 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         [[NSFileManager defaultManager ] fileExistsAtPath:newPath2 isDirectory:&isDirectory2];
         
         if (isDirectory1 && !isDirectory2) {
-            return NSOrderedDescending;
+            return NSOrderedAscending;
         }
         
-        return  NSOrderedAscending;
+        return  NSOrderedDescending;
     }];
 }
 
