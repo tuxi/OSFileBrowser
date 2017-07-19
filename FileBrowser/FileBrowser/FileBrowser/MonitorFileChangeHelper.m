@@ -45,7 +45,13 @@
     dispatch_queue_t defaultQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     _source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE,
                                      _fileDescriptor,
-                                     DISPATCH_VNODE_ATTRIB | DISPATCH_VNODE_DELETE | DISPATCH_VNODE_EXTEND | DISPATCH_VNODE_LINK | DISPATCH_VNODE_RENAME | DISPATCH_VNODE_REVOKE | DISPATCH_VNODE_WRITE,
+                                     DISPATCH_VNODE_ATTRIB |
+                                     DISPATCH_VNODE_DELETE |
+                                     DISPATCH_VNODE_EXTEND |
+                                     DISPATCH_VNODE_LINK |
+                                     DISPATCH_VNODE_RENAME |
+                                     DISPATCH_VNODE_REVOKE |
+                                     DISPATCH_VNODE_WRITE,
                                      defaultQueue);
     dispatch_source_set_event_handler(_source, ^ {
         unsigned long eventTypes = dispatch_source_get_data(_source);

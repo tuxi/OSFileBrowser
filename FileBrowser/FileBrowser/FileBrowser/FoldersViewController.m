@@ -45,7 +45,8 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 @property (nonatomic, strong) UIButton *deleteButton;
 @property (nonatomic, copy) NSString *selectorFilenNewName;
 @property (nonatomic, strong) NSProgress *fileProgress;
-@property (nonatomic, strong) MonitorFileChangeHelper *fileHelper;
+@property (nonatomic, strong) MonitorFileChangeHelper *currentFolderHelper;
+@property (nonatomic, strong) MonitorFileChangeHelper *documentFolderHelper;
 
 @end
 
@@ -76,11 +77,18 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         _fileProgress = [NSProgress progressWithTotalUnitCount:0];
         [_fileProgress addObserver:self forKeyPath:NSStringFromSelector(@selector(fractionCompleted)) options:NSKeyValueObservingOptionInitial context:FileProgressObserverContext];
         
-        _fileHelper = [MonitorFileChangeHelper new];
+        _currentFolderHelper = [MonitorFileChangeHelper new];
         __weak typeof(self) weakSelf = self;
-        [_fileHelper watcherForPath:self.path block:^(NSInteger type) {
+        [_currentFolderHelper watcherForPath:self.path block:^(NSInteger type) {
             [weakSelf reloadFiles];
         }];
+        NSString *documentPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+        if (![self.path isEqualToString:documentPath]) {
+            _documentFolderHelper = [MonitorFileChangeHelper new];
+            [_documentFolderHelper watcherForPath:documentPath block:^(NSInteger type) {
+                [weakSelf reloadFiles];
+            }];
+        }
     }
     return self;
 }
