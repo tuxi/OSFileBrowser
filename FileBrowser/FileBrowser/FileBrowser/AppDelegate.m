@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "FilesViewController.h"
+#import "FoldersViewController.h"
 
 @interface AppDelegate ()
 
@@ -23,7 +23,7 @@
         
     [self.window makeKeyAndVisible];
     NSString *startingPath = NSHomeDirectory();
-    FilesViewController *filesVC = [[FilesViewController alloc] initWithPath:startingPath];
+    FoldersViewController *filesVC = [[FoldersViewController alloc] initWithPath:startingPath];
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:filesVC];
     UINavigationController *detailNavController = [[UINavigationController alloc] init];
