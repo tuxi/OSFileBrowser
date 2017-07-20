@@ -8,8 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+@class FileAttributeItem;
+
 @interface FileTableViewCell : UITableViewCell
 
-@property (nonatomic, assign) NSString *path;
+@property (nonatomic, strong) FileAttributeItem *fileModel;
 
 @end
+
