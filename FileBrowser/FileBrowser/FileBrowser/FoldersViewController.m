@@ -507,10 +507,11 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
             [self.navigationController showDetailViewController:detailNavController sender:self];
         } else {
             QLPreviewController *preview = (QLPreviewController *)viewController;
+            /*
             preview.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"back" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonClick)];
             UINavigationController *detailNavController = [[UINavigationController alloc] initWithRootViewController:preview];
-            
-            [self.navigationController showDetailViewController:detailNavController sender:self];
+             */
+            [self.navigationController showDetailViewController:preview sender:self];
         }
     }
 }
