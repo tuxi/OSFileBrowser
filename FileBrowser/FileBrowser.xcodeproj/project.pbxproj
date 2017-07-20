@@ -14,6 +14,8 @@
 		18026AC91F05606D001C6379 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18026AC81F05606D001C6379 /* AppDelegate.m */; };
 		18026ACC1F0560B2001C6379 /* FoldersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18026ACB1F0560B2001C6379 /* FoldersViewController.m */; };
 		184BFA7E1F20C7A000BA69E3 /* FileAttributeItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 184BFA7D1F20C7A000BA69E3 /* FileAttributeItem.m */; };
+		184BFAA71F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m in Sources */ = {isa = PBXBuildFile; fileRef = 184BFAA61F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m */; };
+		184BFAAA1F20FAAF00BA69E3 /* DirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 184BFAA91F20FAAF00BA69E3 /* DirectoryWatcher.m */; };
 		186984211F1F8C0C00423B0D /* MonitorFileChangeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 186984201F1F8C0C00423B0D /* MonitorFileChangeHelper.m */; };
 		186984241F1F9FBE00423B0D /* NSString+FileExtend.m in Sources */ = {isa = PBXBuildFile; fileRef = 186984231F1F9FBE00423B0D /* NSString+FileExtend.m */; };
 		187BA6331F07427E00E7EA5D /* FileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 187BA6321F07427E00E7EA5D /* FileTableViewCell.m */; };
@@ -33,6 +35,10 @@
 		18026ACB1F0560B2001C6379 /* FoldersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoldersViewController.m; sourceTree = "<group>"; };
 		184BFA7C1F20C7A000BA69E3 /* FileAttributeItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileAttributeItem.h; sourceTree = "<group>"; };
 		184BFA7D1F20C7A000BA69E3 /* FileAttributeItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileAttributeItem.m; sourceTree = "<group>"; };
+		184BFAA51F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+FileOperationExtend.h"; sourceTree = "<group>"; };
+		184BFAA61F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+FileOperationExtend.m"; sourceTree = "<group>"; };
+		184BFAA81F20FAAF00BA69E3 /* DirectoryWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryWatcher.h; sourceTree = "<group>"; };
+		184BFAA91F20FAAF00BA69E3 /* DirectoryWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectoryWatcher.m; sourceTree = "<group>"; };
 		1869841F1F1F8C0C00423B0D /* MonitorFileChangeHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonitorFileChangeHelper.h; sourceTree = "<group>"; };
 		186984201F1F8C0C00423B0D /* MonitorFileChangeHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MonitorFileChangeHelper.m; sourceTree = "<group>"; };
 		186984221F1F9FBE00423B0D /* NSString+FileExtend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FileExtend.h"; sourceTree = "<group>"; };
@@ -108,6 +114,10 @@
 				186984201F1F8C0C00423B0D /* MonitorFileChangeHelper.m */,
 				186984221F1F9FBE00423B0D /* NSString+FileExtend.h */,
 				186984231F1F9FBE00423B0D /* NSString+FileExtend.m */,
+				184BFAA51F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.h */,
+				184BFAA61F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m */,
+				184BFAA81F20FAAF00BA69E3 /* DirectoryWatcher.h */,
+				184BFAA91F20FAAF00BA69E3 /* DirectoryWatcher.m */,
 			);
 			path = FileBrowser;
 			sourceTree = "<group>";
@@ -184,6 +194,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				184BFAA71F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m in Sources */,
 				18026AC91F05606D001C6379 /* AppDelegate.m in Sources */,
 				187BA6331F07427E00E7EA5D /* FileTableViewCell.m in Sources */,
 				186984211F1F8C0C00423B0D /* MonitorFileChangeHelper.m in Sources */,
@@ -191,6 +202,7 @@
 				187BA6361F0761B500E7EA5D /* NSObject+IvarList.m in Sources */,
 				18026ACC1F0560B2001C6379 /* FoldersViewController.m in Sources */,
 				186984241F1F9FBE00423B0D /* NSString+FileExtend.m in Sources */,
+				184BFAAA1F20FAAF00BA69E3 /* DirectoryWatcher.m in Sources */,
 				184BFA7E1F20C7A000BA69E3 /* FileAttributeItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

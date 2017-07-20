@@ -11,7 +11,11 @@
 @interface FileAttributeItem : NSObject
 
 @property (nonatomic, copy) NSString *fullPath;
-@property (nonatomic, copy) NSString *fileSize;
+@property (nonatomic, assign) int64_t totalFileSize;
+@property (nonatomic, assign) int64_t receivedFileSize;
 @property (nonatomic, assign) NSUInteger subFileCount;
+@property (nonatomic, strong) NSProgress *progress;
+
+- (void)getProgress;;
 
 @end

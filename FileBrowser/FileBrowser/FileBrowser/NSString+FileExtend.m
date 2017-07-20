@@ -159,4 +159,11 @@
     return totalSize;
 }
 
+- (BOOL)updateModificationDateForFilePath {
+    NSDictionary *setDic =[NSDictionary dictionaryWithObject:[NSDate date] forKey:NSFileModificationDate];
+    return  [[NSFileManager defaultManager] setAttributes:setDic ofItemAtPath:self error:nil];
+}
+
+
+
 @end

@@ -20,7 +20,7 @@
 @property (nonatomic, strong) NSMutableArray<FileAttributeItem *> *selectorFiles;
 @property (nonatomic, assign) BOOL displayHiddenFiles;
 @property (nonatomic, assign) BOOL selectorMode;
-@property (nonatomic, copy) void (^selectorFilsCompetionHandler)(NSArray<NSString *> *paths);
+@property (nonatomic, copy) void (^selectorFilsCompetionHandler)(NSArray<FileAttributeItem *> *fileitems);
 
 @end
 
