@@ -209,9 +209,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
             if (!error) {
                 model.subFileCount = subFiles.count;
             }
-            //            [fullPath asyncFileSize:^(unsigned long long fileSize) {
-            //                model.fileSize = [NSString stringWithFormat:@"%@", [NSString transformedFileSizeValue:@(fileSize)]];
-            //            }];
+
             [array addObject:model];
         }];
         self.files = [array copy];
@@ -483,13 +481,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     }
 }
 
-//- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    if (self.selectorMode) {
-//        return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
-//    } else {
-//        return UITableViewCellEditingStyleNone;
-//    }
-//}
 
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -594,9 +585,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     return YES;
 }
 
-//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
-//    [self deleteFileAtIndexPath:indexPath];
-//}
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
     return @"delete";
@@ -674,8 +662,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 
 - (id <QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger) index {
     NSLog(@"index: %ld", self.tableView.indexPathForSelectedRow.row);
-    // self.tableView.indexPathForSelectedRow 获取当前选中的IndexPath,
-    // 注意: 当设置了[tableView deselectRowAtIndexPath:indexPath animated:YES]后，indexPathForSelectedRow为初始值
     NSString *newPath = self.files[self.indexPath.row].fullPath;
     
     return [NSURL fileURLWithPath:newPath];
@@ -886,6 +872,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     NSMutableString *attstring = @"".mutableCopy;
     [fileAtt enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         if ([key isEqualToString:NSFileSize]) {
+            obj = [NSString transformedFileSizeValue:obj];
         }
         [attstring appendString:[NSString stringWithFormat:@"%@:%@\n", key, obj]];
     }];
@@ -909,20 +896,31 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     [self.navigationController presentViewController:shareActivity animated:YES completion:nil];
 }
 
+
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Other
 ////////////////////////////////////////////////////////////////////////
 
++ (NSArray *)fileExtensions {
+    return @[@"plist",
+             @"strings",
+             @"xcconfig",
+             @"version"];
+}
+
 + (BOOL)canHandleExtension:(NSString *)fileExtension {
-    return ([fileExtension.lowercaseString isEqualToString:@"plist"] || [fileExtension.lowercaseString isEqualToString:@"strings"] || [fileExtension.lowercaseString isEqualToString:@"xcconfig"]);
+    return [[self fileExtensions] containsObject:fileExtension.lowercaseString];
 }
 
 - (void)loadFile:(NSString *)file {
-    if ([file.pathExtension.lowercaseString isEqualToString:@"plist"] || [file.pathExtension.lowercaseString isEqualToString:@"strings"]) {
+    if ([file.pathExtension.lowercaseString isEqualToString:@"plist"] ||
+        [file.pathExtension.lowercaseString isEqualToString:@"strings"]) {
         NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:file];
         [_textView setText:[d description]];
         self.view = _textView;
-    } else if ([file.pathExtension.lowercaseString isEqualToString:@"xcconfig"]) {
+    }
+    else if ([file.pathExtension.lowercaseString isEqualToString:@"xcconfig"] ||
+             [file.pathExtension.lowercaseString isEqualToString:@"version"]) {
         NSString *d = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
         [_textView setText:d];
         self.view = _textView;
