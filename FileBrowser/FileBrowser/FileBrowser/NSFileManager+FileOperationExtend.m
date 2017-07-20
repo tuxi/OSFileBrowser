@@ -62,16 +62,16 @@
     
     do {
         lastSize = fileSize;
-        [NSThread sleepForTimeInterval:0.2];
+        [NSThread sleepForTimeInterval:0.5];
         if (isFinishedCopy) {
             isFinishedCopy(NO, lastSize);
         }
         NSLog(@"文件正在写入, 已写入大小:%llu", lastSize);
-        /*
+        
          fileAttrs = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
          fileSize = [[fileAttrs objectForKey:NSFileSize] intValue];
-         */
-        fileSize = [filePath fileSize];
+         
+        //fileSize = [filePath fileSize];
         
     } while (lastSize != fileSize);
     

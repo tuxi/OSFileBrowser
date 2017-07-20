@@ -345,7 +345,11 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
             self.fileProgress.totalUnitCount++;
             [self.fileProgress becomeCurrentWithPendingUnitCount:1];
             [obj getProgress];
+            /*
             obj.totalFileSize = [obj.fullPath fileSize];
+             */
+            NSDictionary *fileAttrs = [[NSFileManager defaultManager] attributesOfItemAtPath:obj.fullPath error:nil];
+            obj.totalFileSize = [[fileAttrs objectForKey:NSFileSize] intValue];
             [self.fileProgress resignCurrent];
             
             NSString *desPath = [weakSelf.path stringByAppendingPathComponent:[obj.fullPath lastPathComponent]];
@@ -389,7 +393,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
                     NSLog(@"Error: %@", removeError.localizedDescription);
                     obj.receivedFileSize = obj.totalFileSize;
                 } else {
-                    [_fileManager moveItemAtPath:obj.fullPath toPath:desPath handler:^(BOOL isFinishedCopy, unsigned long long receivedFileSize, NSError *error) {
+                    [_fileManager copyItemAtPath:obj.fullPath toPath:desPath handler:^(BOOL isFinishedCopy, unsigned long long receivedFileSize, NSError *error) {
                         obj.receivedFileSize = receivedFileSize;
                         if (isFinishedCopy) {
                             obj.receivedFileSize = obj.totalFileSize;
@@ -398,7 +402,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
                     
                 }
             } else {
-                [_fileManager moveItemAtPath:obj.fullPath toPath:desPath handler:^(BOOL isFinishedCopy, unsigned long long receivedFileSize, NSError *error) {
+                [_fileManager copyItemAtPath:obj.fullPath toPath:desPath handler:^(BOOL isFinishedCopy, unsigned long long receivedFileSize, NSError *error) {
                     obj.receivedFileSize = receivedFileSize;
                     if (isFinishedCopy) {
                         obj.receivedFileSize = obj.totalFileSize;
