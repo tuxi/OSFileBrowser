@@ -237,12 +237,14 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 }
 
 - (NSArray *)removeHiddenFilesFromFiles:(NSArray *)files {
-    NSIndexSet *indexSet = [files indexesOfObjectsPassingTest:^BOOL(FileAttributeItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        return [obj.fullPath.lastPathComponent hasPrefix:@"."];
-    }];
-    NSMutableArray *tempFiles = [self.files mutableCopy];
-    [tempFiles removeObjectsAtIndexes:indexSet];
-    return tempFiles;
+    @synchronized (self) {
+        NSMutableArray *tempFiles = [self.files mutableCopy];
+        NSIndexSet *indexSet = [files indexesOfObjectsPassingTest:^BOOL(FileAttributeItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            return [obj.fullPath.lastPathComponent hasPrefix:@"."];
+        }];
+        [tempFiles removeObjectsAtIndexes:indexSet];
+        return tempFiles;
+    }
     
 }
 
@@ -618,10 +620,9 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
             NSError *moveError = nil;
             [[NSFileManager defaultManager] moveItemAtPath:currentPath toPath:newPath error:&moveError];
             if (!moveError) {
-                NSMutableArray *files = [self.files mutableCopy];
-                [files replaceObjectAtIndex:indexPath.row withObject:self.selectorFilenNewName];
-                self.files = files;
-                [tableView reloadData];
+                NSString *selectorFullPath = [self.path stringByAppendingPathComponent:self.selectorFilenNewName];
+                FileAttributeItem *fileItem = self.files[indexPath.row];
+                fileItem.fullPath = selectorFullPath;
             } else {
                 NSLog(@"%@", moveError.localizedDescription);
             }
