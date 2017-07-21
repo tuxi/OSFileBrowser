@@ -54,8 +54,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 @property (nonatomic, strong) UIButton *deleteButton;
 @property (nonatomic, copy) NSString *selectorFilenNewName;
 @property (nonatomic, strong) NSProgress *fileProgress;
-@property (nonatomic, strong) MonitorFileChangeHelper *currentFolderHelper;
-@property (nonatomic, strong) MonitorFileChangeHelper *documentFolderHelper;
 @property (nonatomic, strong) NSOperationQueue *loadFileQueue;
 @property (nonatomic, strong) NSFileManager *fileManager;
 
@@ -95,19 +93,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         
         __weak typeof(self) weakSelf = self;
         NSString *documentPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-        /*
-        _currentFolderHelper = [MonitorFileChangeHelper new];
-        [_currentFolderHelper watcherForPath:self.path block:^(NSInteger type) {
-            [weakSelf reloadFiles];
-        }];
-        
-        if (![self.path isEqualToString:documentPath]) {
-            _documentFolderHelper = [MonitorFileChangeHelper new];
-            [_documentFolderHelper watcherForPath:documentPath block:^(NSInteger type) {
-                [weakSelf reloadFiles];
-            }];
-        }
-        */
       _directoryWatcher = [DirectoryWatcher watchFolderWithPath:self.path directoryDidChange:^(DirectoryWatcher *folderWatcher) {
             [weakSelf reloadFiles];
         }];
@@ -173,7 +158,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-progressBarTopConst-[progressBar]" options:kNilOptions metrics:metricsDictionary views:viewsDictionary]];
 }
 
-
 - (void)setSelectorMode:(BOOL)selectorMode {
     if (_selectorMode == selectorMode) {
         return;
@@ -211,6 +195,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     
 }
 
+
 - (void)loadFile:(NSString *)path completion:(void (^)())completion {
     [_loadFileQueue addOperationWithBlock:^{
         NSMutableArray *array = [NSMutableArray array];
@@ -227,9 +212,12 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
             NSError *error = nil;
             NSArray *subFiles = [_fileManager contentsOfDirectoryAtPath:fullPath error:&error];
             if (!error) {
+                if (!_displayHiddenFiles) {
+                    subFiles = [self removeHiddenFilesFromFiles:subFiles];
+                }
                 model.subFileCount = subFiles.count;
             }
-
+            
             [array addObject:model];
         }];
         self.files = [array copy];
@@ -241,6 +229,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         }
     }];
 }
+
 
 - (void)setDisplayHiddenFiles:(BOOL)displayHiddenFiles {
     if (_displayHiddenFiles == displayHiddenFiles) {
@@ -258,15 +247,22 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 
 - (NSArray *)removeHiddenFilesFromFiles:(NSArray *)files {
     @synchronized (self) {
-        NSMutableArray *tempFiles = [self.files mutableCopy];
-        NSIndexSet *indexSet = [files indexesOfObjectsPassingTest:^BOOL(FileAttributeItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            return [obj.fullPath.lastPathComponent hasPrefix:@"."];
+        NSMutableArray *tempFiles = [files mutableCopy];
+        NSIndexSet *indexSet = [tempFiles indexesOfObjectsPassingTest:^BOOL(FileAttributeItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj isKindOfClass:[FileAttributeItem class]]) {
+                return [obj.fullPath.lastPathComponent hasPrefix:@"."];
+            } else if ([obj isKindOfClass:[NSString class]]) {
+                NSString *path = (NSString *)obj;
+                return [path.lastPathComponent hasPrefix:@"."];
+            }
+            return NO;
         }];
         [tempFiles removeObjectsAtIndexes:indexSet];
         return tempFiles;
     }
     
 }
+
 
 
 - (void)reloadFiles {
@@ -289,7 +285,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         }
     }];
 }
-
 - (void)chooseSandBoxDocumentFiles {
     __weak typeof(self) weakSelf = self;
     if ([self.selectorButton.currentTitle isEqualToString:@"add"]) {
@@ -304,7 +299,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         };
     } else {
         
-    
+        
         [self.navigationController popViewControllerAnimated:YES];
         
         if (self.selectorFilsCompetionHandler) {
@@ -344,9 +339,9 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         [fileItems enumerateObjectsUsingBlock:^(FileAttributeItem *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             self.fileProgress.totalUnitCount++;
             [self.fileProgress becomeCurrentWithPendingUnitCount:1];
-            [obj getProgress];
+            [obj addProgress];
             /*
-            obj.totalFileSize = [obj.fullPath fileSize];
+             obj.totalFileSize = [obj.fullPath fileSize];
              */
             NSDictionary *fileAttrs = [[NSFileManager defaultManager] attributesOfItemAtPath:obj.fullPath error:nil];
             obj.totalFileSize = [[fileAttrs objectForKey:NSFileSize] intValue];
@@ -539,6 +534,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     
 }
 
+
 - (void)jumpToDetailControllerToViewController:(UIViewController *)viewController atIndexPath:(NSIndexPath *)indexPath {
     NSString *newPath = self.files[indexPath.row].fullPath;
     BOOL isDirectory;
@@ -626,6 +622,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     }
 }
 
+
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - UITableViewDelegate
 ////////////////////////////////////////////////////////////////////////
@@ -666,7 +663,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
             NSError *moveError = nil;
             [_fileManager moveItemAtPath:currentPath toPath:newPath error:&moveError];
             if (!moveError) {
-                [newPath updateModificationDateForFilePath];
+                [newPath updateFileModificationDateForFilePath];
                 NSString *selectorFullPath = [self.path stringByAppendingPathComponent:self.selectorFilenNewName];
                 FileAttributeItem *fileItem = self.files[indexPath.row];
                 fileItem.fullPath = selectorFullPath;
@@ -861,8 +858,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 
 #pragma mark *** FilePreviewViewController ***
 
-
-
 @implementation FilePreviewViewController
 
 ////////////////////////////////////////////////////////////////////////
@@ -955,7 +950,8 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     return @[@"plist",
              @"strings",
              @"xcconfig",
-             @"version"];
+             @"version",
+             @"archive"];
 }
 
 + (BOOL)canHandleExtension:(NSString *)fileExtension {
@@ -964,7 +960,8 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 
 - (void)loadFile:(NSString *)file {
     if ([file.pathExtension.lowercaseString isEqualToString:@"plist"] ||
-        [file.pathExtension.lowercaseString isEqualToString:@"strings"]) {
+        [file.pathExtension.lowercaseString isEqualToString:@"strings"] ||
+        [file.pathExtension.lowercaseString isEqualToString:@"archive"]) {
         NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:file];
         [_textView setText:[d description]];
         self.view = _textView;
@@ -983,4 +980,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 }
 
 @end
+
+
 

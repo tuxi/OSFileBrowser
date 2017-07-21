@@ -16,6 +16,6 @@
 @property (nonatomic, assign) NSUInteger subFileCount;
 @property (nonatomic, strong) NSProgress *progress;
 
-- (void)getProgress;;
+- (NSProgress *)addProgress;
 
 @end

@@ -16,7 +16,7 @@
 + (NSString *)stringWithRemainingTime:(NSInteger)secs;
 - (unsigned long long)fileSize;
 /// 修改文件时间
-- (BOOL)updateModificationDateForFilePath;
+- (BOOL)updateFileModificationDateForFilePath;
 
 
 @end
