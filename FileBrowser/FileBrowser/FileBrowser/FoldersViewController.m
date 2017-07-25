@@ -332,13 +332,11 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
         self.hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].delegate.window animated:YES];
         [self.hud setOffset:CGPointMake(0, -150)];
     });
-    [_loadFileQueue addOperationWithBlock:^{
-        __block CGFloat offsetY = 80;
-        [fileItems enumerateObjectsUsingBlock:^(FileAttributeItem *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    
+   NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+        [fileItems enumerateObjectsUsingBlock:^(FileAttributeItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             
             NSString *desPath = [rootPath stringByAppendingPathComponent:[obj.fullPath lastPathComponent]];
-            NSURL *desURL = [NSURL fileURLWithPath:desPath];
-            
             if ([desPath isEqualToString:obj.fullPath]) {
                 NSLog(@"路径相同");
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -346,7 +344,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
                 });
                 return;
             }
-
+            
             if ([_fileManager fileExistsAtPath:desPath]) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.hud.labelText = @"存在相同文件，正在移除原文件";
@@ -357,20 +355,33 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
                     NSLog(@"Error: %@", removeError.localizedDescription);
                 }
             }
+        }];
+    }];
+    
+    operation.completionBlock = ^{
+        __block CGFloat offsetY = -80;
+        
+        [fileItems enumerateObjectsUsingBlock:^(FileAttributeItem *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             
-            offsetY = offsetY + (idx * offsetY);
+            NSString *desPath = [rootPath stringByAppendingPathComponent:[obj.fullPath lastPathComponent]];
+            NSURL *desURL = [NSURL fileURLWithPath:desPath];
+            
             __block MBProgressHUD *hud = nil;
             dispatch_async(dispatch_get_main_queue(), ^{
-                hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+                hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].delegate.window animated:YES];
                 hud.mode = MBProgressHUDModeDeterminate;
-                hud.label.text = NSLocalizedString(@"Loading...", @"HUD loading title");
                 [hud.button setTitle:NSLocalizedString(@"Cancel", @"HUD cancel button title") forState:UIControlStateNormal];
+                offsetY = offsetY + (idx * 80);
                 hud.offset = CGPointMake(0.f, offsetY);
                 [hud.button addTarget:self action:@selector(cancelFileOperation:) forControlEvents:UIControlEventTouchUpInside];
             });
             NSString *key = [NSString stringWithFormat:@"%p", hud.button];
-           id<OSFileOperation> fileOperation = [[OSFileManager defaultManager] copyItemAtURL:[NSURL fileURLWithPath:obj.fullPath] toURL:desURL progress:^(NSProgress *progress) {
-               hud.progressObject = progress;
+            id<OSFileOperation> fileOperation = [[OSFileManager defaultManager] copyItemAtURL:[NSURL fileURLWithPath:obj.fullPath] toURL:desURL progress:^(NSProgress *progress) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    hud.progressObject = progress;
+                    hud.label.text = [self percentageString:progress.fractionCompleted];
+                });
+                
             } completionHandler:^(id<OSFileOperation> fileOperation, NSError *error) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [hud hideAnimated:YES];
@@ -389,7 +400,9 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
             }];
             [_fileOperations addObject:@{key: fileOperation}];
         }];
-    }];
+    };
+    
+    [_loadFileQueue addOperation:operation];
     
     __weak typeof(self) weakSelf = self;
     
@@ -419,6 +432,10 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     if (foundIdx != NSNotFound) {
         id<OSFileOperation> operation = [[_fileOperations objectAtIndex:foundIdx] objectForKey:key];
         [operation cancel];
+    } else {
+        if (_fileOperations.count == 1) {
+            [_fileOperations.lastObject.allValues.lastObject cancel];
+        }
     }
     
     

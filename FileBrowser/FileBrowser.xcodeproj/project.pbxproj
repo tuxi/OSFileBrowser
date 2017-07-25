@@ -20,6 +20,7 @@
 		187BA6361F0761B500E7EA5D /* NSObject+IvarList.m in Sources */ = {isa = PBXBuildFile; fileRef = 187BA6351F0761B500E7EA5D /* NSObject+IvarList.m */; };
 		18D0F0391F2784FF002A4209 /* OSFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D0F0381F2784FF002A4209 /* OSFileManager.m */; };
 		18D0F03D1F278582002A4209 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D0F03C1F278582002A4209 /* MBProgressHUD.m */; };
+		18D0F03F1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D0F03E1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 		18D0F0381F2784FF002A4209 /* OSFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSFileManager.m; sourceTree = "<group>"; };
 		18D0F03B1F278582002A4209 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		18D0F03C1F278582002A4209 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		18D0F03E1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSPDFUIKitMainThreadGuard.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +120,7 @@
 				184BFAA91F20FAAF00BA69E3 /* DirectoryWatcher.m */,
 				18D0F03B1F278582002A4209 /* MBProgressHUD.h */,
 				18D0F03C1F278582002A4209 /* MBProgressHUD.m */,
+				18D0F03E1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m */,
 			);
 			path = FileBrowser;
 			sourceTree = "<group>";
@@ -197,6 +200,7 @@
 				184BFAA71F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m in Sources */,
 				18026AC91F05606D001C6379 /* AppDelegate.m in Sources */,
 				186984211F1F8C0C00423B0D /* MonitorFileChangeHelper.m in Sources */,
+				18D0F03F1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m in Sources */,
 				18026AB11F05602F001C6379 /* main.m in Sources */,
 				18D0F0391F2784FF002A4209 /* OSFileManager.m in Sources */,
 				187BA6361F0761B500E7EA5D /* NSObject+IvarList.m in Sources */,

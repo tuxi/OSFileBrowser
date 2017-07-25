@@ -20,17 +20,10 @@
     // Override point for customization after application launch.
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        
+    FoldersViewController *vc = [[FoldersViewController alloc] initWithRootDirectory:NSHomeDirectory()];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+    self.window.rootViewController = navController;
     [self.window makeKeyAndVisible];
-    NSString *startingPath = NSHomeDirectory();
-    FoldersViewController *filesVC = [[FoldersViewController alloc] initWithRootDirectory:startingPath];
-    
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:filesVC];
-    UINavigationController *detailNavController = [[UINavigationController alloc] init];
-    UISplitViewController *splitController = [[UISplitViewController alloc] init];
-    splitController.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-    splitController.viewControllers = @[navController, detailNavController];
-    self.window.rootViewController = splitController;
     
     return YES;
 }
