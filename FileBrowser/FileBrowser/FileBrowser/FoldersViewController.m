@@ -294,6 +294,16 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 - (void)chooseSandBoxDocumentFiles {
     
     if ([self.selectorButton.currentTitle isEqualToString:@"add"]) {
+        
+        NSString *documentPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+//        NSArray *array = [_fileManager subpathsAtPath:documentPath];
+        NSArray *array = [_fileManager contentsOfDirectoryAtPath:documentPath error:nil];
+        if (!array.count) {
+            self.hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].delegate.window animated:YES];
+            self.hud.labelText = @"There are no files. Please copy some files in the document directory";
+            return;
+        }
+        
         // 跳转到沙盒document目录下的文件，并将选择的文件copy到当前目录下
         FoldersViewController *vc = [[FoldersViewController alloc] initWithRootDirectory:NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject];
         vc.selectorMode = YES;
@@ -409,7 +419,7 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     [OSFileManager defaultManager].totalProgressBlock = ^(NSProgress *progress) {
         self.hud.labelText = [NSString stringWithFormat:@"total:%@  %lld/%lld", [self percentageString:progress.fractionCompleted], progress.completedUnitCount, progress.totalUnitCount];
         weakSelf.progressBar.progress = progress.fractionCompleted;
-        if (progress.fractionCompleted >= 1.0) {
+        if (progress.fractionCompleted >= 1.0 && progress.completedUnitCount >= fileItems.count) {
             self.hud.labelText = @"copy success";
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [MBProgressHUD hideAllHUDsForView:[UIApplication sharedApplication].delegate.window animated:YES];
