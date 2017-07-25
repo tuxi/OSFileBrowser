@@ -23,7 +23,7 @@
         
     [self.window makeKeyAndVisible];
     NSString *startingPath = NSHomeDirectory();
-    FoldersViewController *filesVC = [[FoldersViewController alloc] initWithPath:startingPath];
+    FoldersViewController *filesVC = [[FoldersViewController alloc] initWithRootDirectory:startingPath];
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:filesVC];
     UINavigationController *detailNavController = [[UINavigationController alloc] init];
