@@ -452,10 +452,17 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 }
 
 - (NSString *)percentageString:(float)percent {
-    CFLocaleRef currentLocale = CFLocaleCopyCurrent();
-    CFNumberFormatterRef numberFormatter = CFNumberFormatterCreate(NULL, currentLocale, kCFNumberFormatterPercentStyle);
+    
+    static CFNumberFormatterRef numberFormatter = nil;
+    if (!numberFormatter) {
+        CFLocaleRef currentLocale = CFLocaleCopyCurrent();
+        // CFNumberFormatterRef numberFormatter 频繁创建会导致内存暴涨，释放不掉
+        numberFormatter = CFNumberFormatterCreate(NULL, currentLocale, kCFNumberFormatterPercentStyle);
+    }
     CFNumberRef number = CFNumberCreate(NULL, kCFNumberFloatType, &percent);
     CFStringRef numberString = CFNumberFormatterCreateStringWithNumber(NULL, numberFormatter, number);
+    CFRelease(numberString);
+    CFRelease(number);
     return (__bridge NSString *)numberString;
 }
 
