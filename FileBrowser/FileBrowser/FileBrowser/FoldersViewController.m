@@ -581,11 +581,12 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
     NSString *newPath = self.files[indexPath.row].fullPath;
     BOOL isDirectory;
     BOOL fileExists = [_fileManager fileExistsAtPath:newPath isDirectory:&isDirectory];
+    NSURL *url = [NSURL fileURLWithPath:newPath];
     if (fileExists) {
         if (isDirectory) {
             FoldersViewController *vc = (FoldersViewController *)viewController;
             [self.navigationController showViewController:vc sender:self];
-        } else if ([FilePreviewViewController supportedFileExtension:[newPath pathExtension]]) {
+        } else if (![QLPreviewController canPreviewItem:url]) {
             FilePreviewViewController *preview = (FilePreviewViewController *)viewController;
             preview.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"back" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonClick)];
             UINavigationController *detailNavController = [[UINavigationController alloc] initWithRootViewController:preview];
