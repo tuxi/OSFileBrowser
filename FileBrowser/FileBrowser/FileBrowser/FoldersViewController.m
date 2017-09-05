@@ -39,7 +39,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
 
 @property (nonatomic, copy) NSString *filePath;
 
-+ (BOOL)supportedFileExtension:(NSString *)fileExt;
 - (instancetype)initWithPath:(NSString *)file;
 
 @end
@@ -985,10 +984,6 @@ static void * FileProgressObserverContext = &FileProgressObserverContext;
              @"gps"];
 }
 
-+ (BOOL)supportedFileExtension:(NSString *)fileExtension {
-    //    return [[self fileExtensions] containsObject:fileExtension.lowercaseString];
-    return YES;
-}
 
 - (void)loadFile:(NSString *)file {
     if ([file.pathExtension.lowercaseString isEqualToString:@"db"]) {
