@@ -16,6 +16,7 @@
 - (instancetype)initWithRootDirectory:(NSString *)path;
 
 @property (nonatomic, strong) NSString *rootDirectory;
+@property (nonatomic, strong) NSArray<FileAttributeItem *> *files;
 @property (nonatomic, strong) NSMutableArray<FileAttributeItem *> *selectorFiles;
 @property (nonatomic, assign) BOOL displayHiddenFiles;
 @property (nonatomic, assign) BOOL selectorMode;

@@ -15,7 +15,6 @@
 		18026ACC1F0560B2001C6379 /* FoldersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18026ACB1F0560B2001C6379 /* FoldersViewController.m */; };
 		184BFAA71F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m in Sources */ = {isa = PBXBuildFile; fileRef = 184BFAA61F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m */; };
 		184BFAAA1F20FAAF00BA69E3 /* DirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 184BFAA91F20FAAF00BA69E3 /* DirectoryWatcher.m */; };
-		186984211F1F8C0C00423B0D /* MonitorFileChangeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 186984201F1F8C0C00423B0D /* MonitorFileChangeHelper.m */; };
 		186984241F1F9FBE00423B0D /* NSString+FileExtend.m in Sources */ = {isa = PBXBuildFile; fileRef = 186984231F1F9FBE00423B0D /* NSString+FileExtend.m */; };
 		187BA6361F0761B500E7EA5D /* NSObject+IvarList.m in Sources */ = {isa = PBXBuildFile; fileRef = 187BA6351F0761B500E7EA5D /* NSObject+IvarList.m */; };
 		18D0F0391F2784FF002A4209 /* OSFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D0F0381F2784FF002A4209 /* OSFileManager.m */; };
@@ -38,8 +37,6 @@
 		184BFAA61F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+FileOperationExtend.m"; sourceTree = "<group>"; };
 		184BFAA81F20FAAF00BA69E3 /* DirectoryWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryWatcher.h; sourceTree = "<group>"; };
 		184BFAA91F20FAAF00BA69E3 /* DirectoryWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectoryWatcher.m; sourceTree = "<group>"; };
-		1869841F1F1F8C0C00423B0D /* MonitorFileChangeHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonitorFileChangeHelper.h; sourceTree = "<group>"; };
-		186984201F1F8C0C00423B0D /* MonitorFileChangeHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MonitorFileChangeHelper.m; sourceTree = "<group>"; };
 		186984221F1F9FBE00423B0D /* NSString+FileExtend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FileExtend.h"; sourceTree = "<group>"; };
 		186984231F1F9FBE00423B0D /* NSString+FileExtend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FileExtend.m"; sourceTree = "<group>"; };
 		187BA6341F0761B500E7EA5D /* NSObject+IvarList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+IvarList.h"; sourceTree = "<group>"; };
@@ -108,8 +105,6 @@
 				18026ACB1F0560B2001C6379 /* FoldersViewController.m */,
 				187BA6341F0761B500E7EA5D /* NSObject+IvarList.h */,
 				187BA6351F0761B500E7EA5D /* NSObject+IvarList.m */,
-				1869841F1F1F8C0C00423B0D /* MonitorFileChangeHelper.h */,
-				186984201F1F8C0C00423B0D /* MonitorFileChangeHelper.m */,
 				186984221F1F9FBE00423B0D /* NSString+FileExtend.h */,
 				186984231F1F9FBE00423B0D /* NSString+FileExtend.m */,
 				184BFAA51F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.h */,
@@ -199,7 +194,6 @@
 			files = (
 				184BFAA71F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m in Sources */,
 				18026AC91F05606D001C6379 /* AppDelegate.m in Sources */,
-				186984211F1F8C0C00423B0D /* MonitorFileChangeHelper.m in Sources */,
 				18D0F03F1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m in Sources */,
 				18026AB11F05602F001C6379 /* main.m in Sources */,
 				18D0F0391F2784FF002A4209 /* OSFileManager.m in Sources */,
