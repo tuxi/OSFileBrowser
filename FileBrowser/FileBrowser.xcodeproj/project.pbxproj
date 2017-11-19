@@ -15,11 +15,11 @@
 		18026ACC1F0560B2001C6379 /* FoldersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18026ACB1F0560B2001C6379 /* FoldersViewController.m */; };
 		184BFAA71F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m in Sources */ = {isa = PBXBuildFile; fileRef = 184BFAA61F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m */; };
 		184BFAAA1F20FAAF00BA69E3 /* DirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 184BFAA91F20FAAF00BA69E3 /* DirectoryWatcher.m */; };
+		1855DF7E1FA39066001CCAE8 /* PSPDFUIKitMainThreadGuard.m in Sources */ = {isa = PBXBuildFile; fileRef = 1855DF7D1FA39065001CCAE8 /* PSPDFUIKitMainThreadGuard.m */; };
 		186984241F1F9FBE00423B0D /* NSString+FileExtend.m in Sources */ = {isa = PBXBuildFile; fileRef = 186984231F1F9FBE00423B0D /* NSString+FileExtend.m */; };
 		187BA6361F0761B500E7EA5D /* NSObject+IvarList.m in Sources */ = {isa = PBXBuildFile; fileRef = 187BA6351F0761B500E7EA5D /* NSObject+IvarList.m */; };
 		18D0F0391F2784FF002A4209 /* OSFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D0F0381F2784FF002A4209 /* OSFileManager.m */; };
 		18D0F03D1F278582002A4209 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D0F03C1F278582002A4209 /* MBProgressHUD.m */; };
-		18D0F03F1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D0F03E1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +37,7 @@
 		184BFAA61F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+FileOperationExtend.m"; sourceTree = "<group>"; };
 		184BFAA81F20FAAF00BA69E3 /* DirectoryWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryWatcher.h; sourceTree = "<group>"; };
 		184BFAA91F20FAAF00BA69E3 /* DirectoryWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectoryWatcher.m; sourceTree = "<group>"; };
+		1855DF7D1FA39065001CCAE8 /* PSPDFUIKitMainThreadGuard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSPDFUIKitMainThreadGuard.m; sourceTree = "<group>"; };
 		186984221F1F9FBE00423B0D /* NSString+FileExtend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FileExtend.h"; sourceTree = "<group>"; };
 		186984231F1F9FBE00423B0D /* NSString+FileExtend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FileExtend.m"; sourceTree = "<group>"; };
 		187BA6341F0761B500E7EA5D /* NSObject+IvarList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+IvarList.h"; sourceTree = "<group>"; };
@@ -45,7 +46,6 @@
 		18D0F0381F2784FF002A4209 /* OSFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSFileManager.m; sourceTree = "<group>"; };
 		18D0F03B1F278582002A4209 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		18D0F03C1F278582002A4209 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
-		18D0F03E1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSPDFUIKitMainThreadGuard.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,7 +115,7 @@
 				184BFAA91F20FAAF00BA69E3 /* DirectoryWatcher.m */,
 				18D0F03B1F278582002A4209 /* MBProgressHUD.h */,
 				18D0F03C1F278582002A4209 /* MBProgressHUD.m */,
-				18D0F03E1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m */,
+				1855DF7D1FA39065001CCAE8 /* PSPDFUIKitMainThreadGuard.m */,
 			);
 			path = FileBrowser;
 			sourceTree = "<group>";
@@ -193,8 +193,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				184BFAA71F20F3F600BA69E3 /* NSFileManager+FileOperationExtend.m in Sources */,
+				1855DF7E1FA39066001CCAE8 /* PSPDFUIKitMainThreadGuard.m in Sources */,
 				18026AC91F05606D001C6379 /* AppDelegate.m in Sources */,
-				18D0F03F1F279EDA002A4209 /* PSPDFUIKitMainThreadGuard.m in Sources */,
 				18026AB11F05602F001C6379 /* main.m in Sources */,
 				18D0F0391F2784FF002A4209 /* OSFileManager.m in Sources */,
 				187BA6361F0761B500E7EA5D /* NSObject+IvarList.m in Sources */,
